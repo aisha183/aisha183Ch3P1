@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  *
@@ -22,7 +23,8 @@ import java.util.Scanner;
 public class cont {
 
     public static void main(String[] args) throws IOException {
-        Scanner s=new Scanner(System.in);
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter Your text *_*");
         String line = s.nextLine();
         Map<String, Integer> frequency = new HashMap<>();
 
@@ -46,19 +48,19 @@ public class cont {
         }
 
         System.out.println(frequency);
-        
-        
-   //Latters
-   String word1="";
-    Map<String, Integer> frequencyLatter = new HashMap<>();
-     if (!line.equals("")) {
-       for (int i=0;i<line.length();i++){
-        word1=line.substring(i);
-         String []word={word1};
-          for (String words : word) {
-                  System.out.println(words);
-                }
-       }
-     }
+
+        //Latters
+        Map<Character, Integer> frequencyLatter = new HashMap<>();
+        for (char c : line.toCharArray()) {
+            if (c == ' ') {
+                continue;
+            } else if (frequencyLatter.containsKey(c)) {
+                frequencyLatter.put(c, (1 + frequencyLatter.get(c)));
+            } else {
+                frequencyLatter.put(c, 1);
+            }
+        }
+                    System.out.println(frequencyLatter);
+
     }
 }
