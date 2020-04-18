@@ -56,5 +56,8 @@ public class User {
     public String getGrade() {
         return Grade.getValue();
     }
- 
+    @Override
+ public String toString(){
+   return  String.format("%-5s %-10s %-10s %-8.2f",id,name,Major,Grade);
+ }
 }

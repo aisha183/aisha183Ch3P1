@@ -21,6 +21,7 @@ import java.util.TreeMap;
  * @author PC
  */
 public class cont {
+    
 
     public static void main(String[] args) throws IOException {
         Scanner s = new Scanner(System.in);
@@ -61,6 +62,16 @@ public class cont {
             }
         }
                     System.out.println(frequencyLatter);
+                    for (Integer val:frequencyLatter.values()){
+                       System.out.println(val);
+                       
+                      if(val==2){
+                       System.out.println(frequencyLatter.remove(frequencyLatter.keySet()));
+                      }
+                    
+
+                    }
+                 
 
     }
 }
