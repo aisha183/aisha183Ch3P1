@@ -164,8 +164,10 @@ public class Main extends Application {
 
         labelTotalUsers.setTranslateX(20);
         labelTotalUsers.setTranslateY(300);
+        
         buttonShow.setTranslateX(740);
         buttonShow.setTranslateY(250);
+        
         buttonDelete.setTranslateX(330);
         buttonDelete.setTranslateY(250);
 
