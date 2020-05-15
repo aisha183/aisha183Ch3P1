@@ -22,11 +22,10 @@ import javax.persistence.NamedQuery;
             query = "Select s From student s")
     ,
     @NamedQuery(name = "student.findById",
-            query = "Select s From student s Where s.Id= :Id")
-    ,
-    
-   @NamedQuery(name = "student.deletBYid",
-            query = "DELETE FROM student s WHERE  s.Id= :Id")
+            query = "Select s From student s Where s.Id= :Id"),
+    @NamedQuery(name="student.Ubdate",
+            query="Update student s Set s.Name = :name,s.Major =:majore,s.Grade =:grade Where s.Id =:Id")
+   
 })
 public class student {
 

@@ -42,7 +42,7 @@ public class JpaControler extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Pane jpaPane = FXMLLoader.load(getClass().getResource("JpaPane.fxml"));
+        Pane jpaPane = FXMLLoader.load(getClass().getResource("JpaPane1.fxml"));
         Scene scene = new Scene(jpaPane);
         primaryStage.setTitle("JPA App");
         primaryStage.setScene(scene);

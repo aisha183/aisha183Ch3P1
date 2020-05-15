@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,8 +19,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Id;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import static javax.xml.ws.RespectBindingFeature.ID;
+import static jdk.nashorn.internal.runtime.Debug.id;
 
 public class JpaPaneController implements Initializable {
 
@@ -64,35 +69,22 @@ public class JpaPaneController implements Initializable {
 
     @FXML
     private Button buttonAdd;
-    private EntityManagerFactory emf;
-
-    @FXML
-    void txtFieldEmpIDHandle(ActionEvent event) {
-
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        tcID.setCellValueFactory(new PropertyValueFactory("Id"));
-        tcName.setCellValueFactory(new PropertyValueFactory("Name"));
-        tcMajore.setCellValueFactory(new PropertyValueFactory("Majore"));
-        tcGrade.setCellValueFactory(new PropertyValueFactory("Grade"));
-        this.emf = Persistence.createEntityManagerFactory("Ass3P1PU");
-    }
+    public EntityManagerFactory emf;
+    List<student> students;
 
     @FXML
     void buttonShowHandle(ActionEvent event) {
         EntityManager em = emf.createEntityManager();
-        List<student> students = em.createNamedQuery("student.findAll").getResultList();
+        students = em.createNamedQuery("student.findAll").getResultList();
         tableView.getItems().setAll(students);
         em.close();
 
     }
+    student std;
 
     @FXML
     void buttonAddHandle(ActionEvent event) {
-        student std = new student();
+        std = new student();
         std.setName(txtFieldName.getText());
         std.setMajor(txtFieldMajore.getText());
         std.setGrade(Double.parseDouble(txtFieldGrade.getText()));
@@ -106,30 +98,50 @@ public class JpaPaneController implements Initializable {
     @FXML
     void buttonUpdateHandle(ActionEvent event) {
         EntityManager em = this.emf.createEntityManager();
+        try {
+            std = (student) em.createNamedQuery("student.findById")
+                    .setParameter("Id", Integer.parseInt(txtFieldID.getText()))
+                    .getSingleResult();
+            txtFieldName.setText(std.getName());
+            txtFieldMajore.setText(std.getMajor());
+            txtFieldGrade.setText(std.getGrade() + "");
+        } catch (NoResultException ex) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Error Retrieving");
+            alert.setContentText("No records found");
+            alert.showAndWait();
+        }
+
         em.getTransaction().begin();
-        Query query = em.createQuery("Update student s Set s.Name = s.Name + :increment,s.Major = s.Major + :majore,s.Grade = s.Grade + :grade Where s.Id = :ID");
-        query.setParameter("increment", txtFieldName.getText());
-        query.setParameter("majore", txtFieldMajore.getText());
-        query.setParameter("grade", txtFieldGrade.getText());
-        query.setParameter("ID", txtFieldID.getText());
+        int Idnty = Integer.parseInt(txtFieldID.getText());
+        String name1 = txtFieldName.getText();
+        String mjore1 = txtFieldMajore.getText();
+        double grade1 = Double.parseDouble(txtFieldGrade.getText());
+        Query query = em.createQuery("Update student Set Name='" + name1 + "', Majore='"
+                + mjore1 + "', Grade=" + grade1 + " Where Id=" + Idnty);
+        query.setParameter("name", name1);
+        query.setParameter("Id", Idnty);
         int updatedRows = query.executeUpdate();
         System.out.println("Entities updated:" + updatedRows);
         em.getTransaction().commit();
     }
 
     @FXML
-    void buttonDeleteHandle(ActionEvent event) {
-    EntityManager em = emf.createEntityManager();
-        List<student> std = em.createNamedQuery("student.deletBYid").getResultList();
-        tableView.getItems().setAll();
+    void buttonDeleteHandle(ActionEvent e) {
+
+        EntityManager em = emf.createEntityManager();
+        em.createQuery("delete from student s").executeUpdate();
+      
+        emf.close();
         em.close();
     }
 
     @FXML
     void buttonResetHandle(ActionEvent event) {
-      resetControls();
+        resetControls();
     }
-     private void resetControls() {
+
+    private void resetControls() {
         txtFieldID.setText("");
         txtFieldName.setText("");
         txtFieldMajore.setText("");
@@ -137,5 +149,15 @@ public class JpaPaneController implements Initializable {
         tableView.getItems().clear();
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        tcID.setCellValueFactory(new PropertyValueFactory("Id"));
+        tcName.setCellValueFactory(new PropertyValueFactory("Name"));
+        tcMajore.setCellValueFactory(new PropertyValueFactory("Majore"));
+        tcGrade.setCellValueFactory(new PropertyValueFactory("Grade"));
+        tableView = new TableView<>();
+        // tableView.getSelectionModel().selectedItemProperty().addListener();
+        this.emf = Persistence.createEntityManagerFactory("Ass3P1PU");
+    }
 
 }
